@@ -1,0 +1,32 @@
+@page
+@model ExpenseTracker.Api.Pages.Categories.IndexModel
+@{
+    ViewData["Title"] = "Categories";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">Categories</h1>
+    <a asp-page="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add category</a>
+</div>
+<div class="row g-3">
+    @foreach (var c in Model.Categories)
+    {
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center">
+                    <span class="fs-3 me-3">@(c.Icon ?? "📁")</span>
+                    <div class="flex-grow-1">
+                        <strong>@c.Name</strong>
+                        @if (!string.IsNullOrEmpty(c.ColorHex))
+                        {
+                            <span class="badge ms-1" style="background-color: @c.ColorHex"> </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@if (Model.Categories.Count == 0)
+{
+    <p class="text-muted">No categories yet. <a asp-page="Create">Create one</a>.</p>
+}

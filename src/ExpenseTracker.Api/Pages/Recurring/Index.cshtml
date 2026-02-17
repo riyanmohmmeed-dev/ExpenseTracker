@@ -1,0 +1,56 @@
+@page
+@model ExpenseTracker.Api.Pages.Recurring.IndexModel
+@{
+    ViewData["Title"] = "Recurring";
+}
+@if (TempData["Message"] is string msg)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">@msg<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">Recurring</h1>
+    <a asp-page="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add recurring</a>
+</div>
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Frequency</th>
+                    <th>Next due</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Recurring.Count == 0)
+                {
+                    <tr><td colspan="6" class="text-muted text-center py-4">No recurring items. <a asp-page="Create">Add one</a>.</td></tr>
+                }
+                else
+                {
+                    @foreach (var r in Model.Recurring)
+                    {
+                        <tr>
+                            <td>@r.Category?.Name</td>
+                            <td>@r.Amount.ToString("N2")</td>
+                            <td>@(r.IsIncome ? "Income" : "Expense")</td>
+                            <td>@r.Frequency</td>
+                            <td>@r.NextDueDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <form asp-page-handler="Generate" asp-route-id="@r.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Generate</button>
+                                </form>
+                                <form asp-page-handler="Deactivate" asp-route-id="@r.Id" method="post" class="d-inline" onsubmit="return confirm('Deactivate this recurring item?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Deactivate</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

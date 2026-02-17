@@ -1,0 +1,107 @@
+@page
+@model ExpenseTracker.Api.Pages.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">Dashboard</h1>
+    <div class="d-flex gap-2">
+        <a asp-page="/Transactions/Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add transaction</a>
+        <a href="/api/export/csv?from=@Model.From.ToString("yyyy-MM-dd")&to=@Model.To.ToString("yyyy-MM-dd")" class="btn btn-outline-secondary" download><i class="bi bi-download"></i> Export CSV</a>
+    </div>
+</div>
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-auto">
+        <label class="form-label visually-hidden">Month</label>
+        <select name="month" class="form-select" onchange="this.form.submit()">
+            @for (var m = 1; m <= 12; m++)
+            {
+                <option value="@m" selected="@(Model.Month == m)">@DateTimeFormatInfo.CurrentInfo.GetMonthName(m)</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label visually-hidden">Year</label>
+        <select name="year" class="form-select" onchange="this.form.submit()">
+            @for (var y = Model.Year; y >= Model.Year - 3; y--)
+            {
+                <option value="@y" selected="@(Model.Year == y)">@y</option>
+            }
+        </select>
+    </div>
+</form>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Total income</div>
+                <div class="h3 text-success mb-0">@Model.Summary.TotalIncome.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Total expense</div>
+                <div class="h3 text-danger mb-0">@Model.Summary.TotalExpense.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Balance</div>
+                <div class="h3 @(Model.Summary.Balance >= 0 ? "text-success" : "text-danger") mb-0">@Model.Summary.Balance.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Summary.BudgetProgress.Count > 0)
+{
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white"><strong>Budget progress</strong></div>
+        <div class="card-body">
+            @foreach (var b in Model.Summary.BudgetProgress)
+            {
+                var pct = Math.Min(100, (double)b.Percentage);
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small">
+                        <span>@b.CategoryName</span>
+                        <span>@b.Spent.ToString("N2") / @b.Limit.ToString("N2") (@b.Percentage%)</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar @(b.IsOverBudget ? "bg-danger" : "bg-primary")" role="progressbar" style="width: @pct%" aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <strong>Spending by category</strong>
+        <a asp-page="/Transactions/Index" asp-route-month="@Model.Month" asp-route-year="@Model.Year">View all</a>
+    </div>
+    <div class="card-body">
+        @if (Model.Summary.ByCategory.Count == 0)
+        {
+            <p class="text-muted mb-0">No transactions this month. <a asp-page="/Transactions/Create">Add one</a>.</p>
+        }
+        else
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var c in Model.Summary.ByCategory.OrderByDescending(x => x.Total))
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span>@c.CategoryName <span class="badge bg-secondary">@(c.IsIncome ? "Income" : "Expense")</span></span>
+                        <span class="@(c.IsIncome ? "text-success" : "text-danger")">@(c.IsIncome ? "+" : "-")@c.Total.ToString("N2")</span>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

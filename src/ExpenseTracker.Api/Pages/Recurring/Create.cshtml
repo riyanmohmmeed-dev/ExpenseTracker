@@ -1,0 +1,41 @@
+@page
+@model ExpenseTracker.Api.Pages.Recurring.CreateModel
+@{
+    ViewData["Title"] = "Add recurring";
+}
+<div class="mb-4"><a asp-page="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back</a></div>
+<h2 class="h4 mb-4">Add recurring</h2>
+<div class="card border-0 shadow-sm" style="max-width: 28rem;">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <select asp-for="CategoryId" class="form-select" asp-items="Model.CategoryOptions" required></select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Amount</label>
+                <input asp-for="Amount" class="form-control" type="number" step="0.01" required />
+            </div>
+            <div class="mb-3">
+                <div class="form-check">
+                    <input asp-for="IsIncome" class="form-check-input" />
+                    <label asp-for="IsIncome" class="form-check-label">Income</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Frequency</label>
+                <select asp-for="Frequency" class="form-select" asp-items="Model.FrequencyOptions"></select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Next due date</label>
+                <input asp-for="NextDueDate" class="form-control" type="date" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Note</label>
+                <input asp-for="Note" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
