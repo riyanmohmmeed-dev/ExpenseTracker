@@ -77,12 +77,6 @@ You can use these from the in-browser API explorer (link in the app’s nav) or 
 
 ---
 
-## Resume-style one-liner
-
-*Built a full-stack expense tracker with ASP.NET Core and EF Core: categories, income/expense transactions with filtering, monthly budgets with progress, recurring transactions with one-click generation, and CSV export. Includes a REST API with interactive docs and a Razor Pages UI, using a clean layered architecture (Core, Infrastructure, API).*
-
----
-
 ## License
 
 MIT.
